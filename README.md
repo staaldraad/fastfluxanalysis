@@ -9,7 +9,7 @@ Based on research conducted for MSc thesis, related research papers are availabl
 * [Botconf 2013](https://www.botconf.eu/wp-content/uploads/2013/08/09-EtienneStalmans-paper.pdf "Spatial Statistics as a Metric for Detecting Botnet C2 Servers")
 
 Basic Usage
-==========
+----------
 
 To analyse a single domain:
 python FFAnalyse.py -d exampledomain.com
