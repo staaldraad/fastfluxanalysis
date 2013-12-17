@@ -6,6 +6,7 @@ import dns.resolver
 import Geolocate
 import pygeoip
 import argparse
+import URLAnalysis
 
 class ffanalyse():
     def main(self,domain,verbose):
@@ -16,6 +17,8 @@ class ffanalyse():
         self.domain = domain
         self.gl = Geolocate.Geolocate('GeoIPCity.dat')
         self.geoIP = pygeoip.GeoIP('GeoIPASNum.dat')
+        self.urla = URLAnalysis.urlanalyse()
+        self.urla.main('output_b.dgt','output_m.dgt')
         self.resolve_nameservers()
         self.get_dns(domain)
         
@@ -165,11 +168,13 @@ class ffanalyse():
         jp_score = a_count+ns_count+diff_count*1.5+asn_count*1.5+ttl_score+country_count*2
         #===================================================
         print "\n---- Fast-Flux Scores ----"
-        print "Modified Thorsten/Holz: Score (%i) Classified (%s)"%(t_score,"Fast-Flux" if t_score>0 else "Clean")
-        print "Modified Jaroslaw/Patrycja: Score (%i) Classified (%s)"%(jp_score,"Fast-Flux" if jp_score>=18 else "Clean")
+        print "Modified Thorsten/Holz: Score (%i) Classified (%s)"%(t_score,"\033[91mFast-Flux\033[0m" if t_score>0 else "\033[92mClean\033[0m")
+        print "Modified Jaroslaw/Patrycja: Score (%i) Classified (%s)"%(jp_score,"\033[91mFast-Flux\033[0m" if jp_score>=18 else "\033[92mClean\033[0m")
+        print "Rule Based: %s"%("\033[91mFast-Flux\033[0m" if diff_count!=0 and a_count>=2 or  ns_count>1 and ((diff_count>=1 and asn_count>1)or ttl_score == 1) else "\033[92mClean\033[0m")
         print "\n---- Geolocation ----"
-
         self.gl.calcValues(answers)
+        print "\n---- URL Analysis ----"
+        self.urla.checkDomain(qname)
 
 def setOpts(argv):                         
     #defaults
