@@ -219,17 +219,17 @@ class Geolocate:
         mim = self.calculateMorans(matrix,mgrss,meanmg,N)
 
         print "----  Moran's Index ----"
-        print "Timezones: Score (%s) Classified (%s)"%(mit,"Fast-Flux" if mit != 0 else "Clean")
-        print "UTM: Score (%s) Classified (%s)"%(miu,"Fast-Flux" if miu != 0 else "Clean")
-        print "MGRS: Score (%s) Classified (%s)"%(mim,"Fast-Flux" if mim != 0 else "Clean")
-        print "Combined: %s"%(mit*miu*mim)                    
+        print "Timezones: Score (%s) Classified (%s)"%(mit,"\033[91mFast-Flux\033[0m" if mit != 0 else "\033[92mClean\033[0m")
+        print "UTM: Score (%s) Classified (%s)"%(miu,"\033[91mFast-Flux\033[0m" if miu != 0 else "\033[92mClean\033[0m")
+        print "MGRS: Score (%s) Classified (%s)"%(mim,"\033[91mFast-Flux\033[0m" if mim != 0 else "\033[92mClean\033[0m")
+        print "Combined: Score (%s)"%(mit*miu*mim)                    
 
         gct=self.calculateGeary(matrix,timezones,meantz,N)
         gcu=self.calculateGeary(matrix,utms,meantu,N)
         gcm=self.calculateGeary(matrix,mgrss,meanmg,N)
 
         print "----  Geary's Coefficient ----"
-        print "Timezones: Score (%s) Classified (%s)"%(gct,"Fast-Flux" if gct != 0 else "Clean")
-        print "UTM: Score (%s) Classified (%s)"%(gcu,"Fast-Flux" if gcu != 0 else "Clean")
-        print "MGRS: Score (%s) Classified (%s)"%(gcm,"Fast-Flux" if gcm != 0 else "Clean")
-        print "Combined: %s"%(gct*gcu*gcm)
+        print "Timezones: Score (%s) Classified (%s)"%(gct,"\033[91mFast-Flux\033[0m" if gct != 0 else "\033[92mClean\033[0m")
+        print "UTM: Score (%s) Classified (%s)"%(gcu,"\033[91mFast-Flux\033[0m" if gcu != 0 else "\033[92mClean\033[0m")
+        print "MGRS: Score (%s) Classified (%s)"%(gcm,"\033[91mFast-Flux\033[0m" if gcm != 0 else "\033[92mClean\033[0m")
+        print "Combined: Score(%s)"%(gct*gcu*gcm)
