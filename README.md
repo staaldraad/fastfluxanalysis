@@ -17,3 +17,18 @@ python FFAnalyse.py -d exampledomain.com
 To analyse multple domains:
 cat domains.txt | xargs -I {} python FFAnalyse.py -d {}
 
+The URLAnalyse and Geolocate scripts can also be used in isolation, please see the documentation for each of these for usage info.
+
+**Dependencies**
+These can all be installed with a simple *easy_install <package name>*
+* pygeoip
+* mgrs
+* dnspython
+* pytz
+
+**Note about MaxMind Databases:**
+*For Geographic analysis you require the MaxMind databases. These are not included here, please get these from MaxMind.*
+* GeoIPCity.dat
+* GeoIPASNum.dat
+* GeoLiteCity.dat
+
