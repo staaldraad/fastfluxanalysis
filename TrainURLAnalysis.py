@@ -2,6 +2,12 @@
 import sys
 import pickle
 
+"""
+Simple script to generate frequencies distributions of characters and bigrams based on a dataset.
+Author: Etienne Stalmans (etienne@sensepost.com)
+Version: 1.0 (2013)
+"""
+
 class trainer:
     def __init__(self):
         if len(sys.argv)<4:

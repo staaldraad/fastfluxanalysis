@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+"""
+Domain analysis script. Performs a DNS query and examines the response to determine if domain is Fast-Flux.
+Also performs a check using multiple methods to determine whether domain name was algorithmically generated (DGA).
+Author: Etienne Stalmans
+Version: 1.0 (2013)
+"""
+
 import sys,string
 import getopt
 import dns.resolver
@@ -15,7 +22,7 @@ class ffanalyse():
                 'server_rotate': 0,'server':[] }
         self.verbose = verbose
         self.domain = domain
-        self.gl = Geolocate.Geolocate('GeoIPCity.dat')
+        self.gl = Geolocate.Geolocate('GeoLiteCity.dat')
         self.geoIP = pygeoip.GeoIP('GeoIPASNum.dat')
         self.urla = URLAnalysis.urlanalyse()
         self.urla.main('output_b.dgt','output_m.dgt')
@@ -69,7 +76,10 @@ class ffanalyse():
             return [asnrec.split(' ')[0],country]
 
     def get_dns(self,qname):
-        
+        """
+        Perform the DNS query and send the result to the analyzer.
+        @param qname the domain to query
+        """
         rdtype=dns.rdatatype.A
         rdclass=dns.rdataclass.IN
         request = dns.message.make_query(qname, rdtype, rdclass)
@@ -92,7 +102,13 @@ class ffanalyse():
         self.analyse(response)
 
     def analyse(self,response):
-            
+        """
+        Perform analysis on a DNS query response.
+        Checks for Fast-Flux using modified Holz classifier, Jaroslaw/Patrycja classifier.
+        Checks for Fast-Flux using Geolocation 
+        Checks for DGA using multiple statistical classifiers
+        @param response from the DNS query
+        """    
         qname = str(response.question).split()[1] #Query Name
 
         network_ranges = [] #A record responses
@@ -132,14 +148,14 @@ class ffanalyse():
             if '.' in str(a): #weak check that it is an IP address returned
                 answers.append(str(a))
 
-        a_ttl = response.answer[0].ttl
-        a_count = len(answers)
+        a_ttl = response.answer[0].ttl #get the TTL
+        a_count = len(answers) #the number of IP addresses returned
 
         if a_count > 0:            
             for ip in answers:
                 ip = str(ip)
                 st = ip[:ip.rfind('.')]
-                asnd = self.get_asn(st)
+                asnd = self.get_asn(ip)
                 if asnd: 
                     asn,country = asnd
                     if country not in countries:
@@ -151,8 +167,8 @@ class ffanalyse():
 
         
         diff_count = len(network_ranges) #number of IP ranges we have
-        country_count= len(countries)
-        asn_count = len(asns)
+        country_count= len(countries) #number of countries that host A records
+        asn_count = len(asns) #number of netblocks
         if a_ttl <= 300:
             ttl_score = 1
 
@@ -172,12 +188,11 @@ class ffanalyse():
         print "Modified Jaroslaw/Patrycja: Score (%i) Classified (%s)"%(jp_score,"\033[91mFast-Flux\033[0m" if jp_score>=18 else "\033[92mClean\033[0m")
         print "Rule Based: %s"%("\033[91mFast-Flux\033[0m" if diff_count!=0 and a_count>=2 or  ns_count>1 and ((diff_count>=1 and asn_count>1)or ttl_score == 1) else "\033[92mClean\033[0m")
         print "\n---- Geolocation ----"
-        self.gl.calcValues(answers)
+        self.gl.calcValues(answers) #do geolocation check
         print "\n---- URL Analysis ----"
-        self.urla.checkDomain(qname)
+        self.urla.checkDomain(qname) #do check for DGA
 
 def setOpts(argv):                         
-    #defaults
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--domain',dest='domain',action='store',required=True,
         help="A Domain to analyse")

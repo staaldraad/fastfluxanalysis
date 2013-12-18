@@ -5,11 +5,22 @@ import argparse
 import os
 import math
 
+"""
+Performs Domain name analysis using different statistical techniques. Aims to detect whether a domain is a DGA.
+Author: Etienne Stalmans (etienne@sensepost.com)
+Version: 1.4 (2013)
+"""
+
 BIGRAM = 0
 UNIGRAM = 1
 
 class urlanalyse:
     def main(self,safe_in,malicious_in):    
+        """
+        Initialize the frequency tables. Uses pretrained input obtained from TrainURLAnalysis.py
+        @param safe_in the trained frequency set for "clean" domains or known non-DGA values (english dictionary ect)
+        @param malicious_in the trained frequency set for "DGA" domains (confiker,kraken,torpig,ect)
+        """
         s_in = open(safe_in,'rb')
         m_in = open(malicious_in,'rb')
 
